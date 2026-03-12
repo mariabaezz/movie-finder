@@ -8,7 +8,12 @@ def search_movie(title):
         "apikey": API_KEY,
         "t": title
     }
-    response = requests.get(URL_BASE, params=params)
+    try:
+        response = requests.get(URL_BASE, params=params)
+    except requests.RequestException as e:
+        print(f"Error fetching movie data: {e}")
+        return None
+
     response = response.json()
     if response['Response'] == 'False':
         return None
@@ -20,12 +25,21 @@ def search_movie(title):
             "Director": response['Director'],
             "IMDb_Rating": response['imdbRating']
         }
+def show_results(results):
+    if results is None:
+        print("Movie not found.")
+    else:
+        print(f"Title: {results['Title']}")
+        print(f"Year: {results['Year']}")
+        print(f"Genre: {results['Genre']}")
+        print(f"Director: {results['Director']}")
+        print(f"IMDb Rating: {results['IMDb_Rating']}\n")
 
 def menu():
     while True:
-        print("Welcome to movie search!")
+        print("\nWelcome to movie search!\n")
         print("1. Search for a movie")
-        print("2. Exit")
+        print("2. Exit\n")
         choice = (input("Enter your choice: "))
         if choice not in ["1", "2"]:
             print("Invalid choice. Please try again.")
@@ -33,14 +47,7 @@ def menu():
         if choice == "1":
             title = input("Enter movie title: ")
             result = search_movie(title)
-            if result is None:
-                print("Movie not found.")
-            else:
-                print(f"Title: {result['Title']}")
-                print(f"Year: {result['Year']}")
-                print(f"Genre: {result['Genre']}")
-                print(f"Director: {result['Director']}")
-                print(f"IMDb Rating: {result['IMDb_Rating']}")
+            show_results(result)
         if choice == "2":
             break
         
