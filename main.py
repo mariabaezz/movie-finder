@@ -46,7 +46,13 @@ def save_rating(movie,rating):
             ratings = json.load(f)
     except FileNotFoundError:
         ratings = []
-    ratings.append(rating_data)
+    for r in ratings:
+        if r['title'] == movie['Title'] and r['year'] == movie['Year']:
+            print("You have already rated this movie. Updating your rating.")
+            r['rating'] = rating
+            break
+    else:
+        ratings.append(rating_data)
     with open("movie_rating.json", "w") as f:
         json.dump(ratings, f, indent=4)
 
@@ -59,14 +65,29 @@ def show_ratings():
     except FileNotFoundError:
         print("No ratings found.")
 
+def compare_ratings(movie):
+    try:
+        with open("movie_rating.json", "r") as f:
+            ratings = json.load(f)
+            for rating in ratings:
+                if rating['title'] == movie['Title'] and rating['year'] == movie['Year']:
+                    print(f"Your rating: {rating['rating']}")
+                    print(f"IMDb rating: {movie['IMDb_Rating']}")
+                    break
+            else:
+                print("You have not rated this movie yet.")
+    except FileNotFoundError:
+        print("No ratings found.")
+
 def menu():
     while True:
         print("\nWelcome to movie search!\n")
         print("1. Search for a movie")
         print("2. Show my ratings")
-        print("3. Exit\n")
+        print("3. Compare my rating with IMDb rating")
+        print("4. Exit\n")
         choice = (input("Enter your choice: "))
-        if choice not in ["1", "2", "3"]:
+        if choice not in ["1", "2", "3", "4"]:
             print("Invalid choice. Please try again.")
             continue
         if choice == "1":
@@ -82,6 +103,13 @@ def menu():
         if choice == "2":
             show_ratings()
         if choice == "3":
+            title = input("Enter movie title to compare ratings: ")
+            result = search_movie(title)
+            if result is not None:
+                compare_ratings(result)
+            else:
+                print("Movie not found. Please check the title and try again.")
+        if choice == "4":
             break
         
     print("Goodbye!")
