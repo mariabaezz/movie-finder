@@ -26,11 +26,11 @@ def menu():
         print("Welcome to movie search!")
         print("1. Search for a movie")
         print("2. Exit")
-        choice = int(input("Enter your choice: "))
-        if choice > 2 or choice < 1:
+        choice = (input("Enter your choice: "))
+        if choice not in ["1", "2"]:
             print("Invalid choice. Please try again.")
-            return menu()
-        if choice == 1:
+            continue
+        if choice == "1":
             title = input("Enter movie title: ")
             result = search_movie(title)
             if result is None:
@@ -41,12 +41,11 @@ def menu():
                 print(f"Genre: {result['Genre']}")
                 print(f"Director: {result['Director']}")
                 print(f"IMDb Rating: {result['IMDb_Rating']}")
-            menu()
-        if choice == 2:
+        if choice == "2":
             break
         
-        print("Goodbye!")
-        exit()
+    print("Goodbye!")
+
 
 if __name__ == "__main__":
     menu()
