@@ -1,4 +1,5 @@
 import requests
+import json
 
 API_KEY = 'e44a40cb'
 URL_BASE = 'http://www.omdbapi.com/'
@@ -9,10 +10,11 @@ def search_movie(title):
         "t": title
     }
     try:
-        response = requests.get(URL_BASE, params=params)
+        response = requests.get(URL_BASE, params=params, timeout=5)
     except requests.RequestException as e:
         print(f"Error fetching movie data: {e}")
-        return None
+        
+        return "error"
 
     response = response.json()
     if response['Response'] == 'False':
@@ -26,8 +28,10 @@ def search_movie(title):
             "IMDb_Rating": response['imdbRating']
         }
 def show_results(results):
-    if results is None:
-        print("Movie not found.")
+    if results == "error":
+        print("An error occurred while fetching the movie data. Please try again.")
+    elif results is None:
+        print("Movie not found. Please check the title and try again.")
     else:
         print(f"Title: {results['Title']}")
         print(f"Year: {results['Year']}")
@@ -35,20 +39,49 @@ def show_results(results):
         print(f"Director: {results['Director']}")
         print(f"IMDb Rating: {results['IMDb_Rating']}\n")
 
+def save_rating(movie,rating):
+    rating_data = {'title': movie['Title'], 'year': movie['Year'], 'rating': rating}
+    try:
+        with open ("movie_rating.json", "r") as f:
+            ratings = json.load(f)
+    except FileNotFoundError:
+        ratings = []
+    ratings.append(rating_data)
+    with open("movie_rating.json", "w") as f:
+        json.dump(ratings, f, indent=4)
+
+def show_ratings():
+    try:
+        with open("movie_rating.json", "r") as f:
+            ratings = json.load(f)
+            for rating in ratings:
+                print(f"Title: {rating['title']}, Rating: {rating['rating']}")
+    except FileNotFoundError:
+        print("No ratings found.")
+
 def menu():
     while True:
         print("\nWelcome to movie search!\n")
         print("1. Search for a movie")
-        print("2. Exit\n")
+        print("2. Show my ratings")
+        print("3. Exit\n")
         choice = (input("Enter your choice: "))
-        if choice not in ["1", "2"]:
+        if choice not in ["1", "2", "3"]:
             print("Invalid choice. Please try again.")
             continue
         if choice == "1":
             title = input("Enter movie title: ")
             result = search_movie(title)
             show_results(result)
+            rate_movie = input("Would you like to rate this movie? (yes/no): ")
+            if rate_movie == "yes":
+                rating = float(input("Enter your rating (0-10): "))
+                save_rating(result, rating)
+            else:
+                continue
         if choice == "2":
+            show_ratings()
+        if choice == "3":
             break
         
     print("Goodbye!")
