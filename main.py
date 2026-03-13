@@ -62,6 +62,8 @@ def show_ratings():
             ratings = json.load(f)
             for rating in ratings:
                 print(f"Title: {rating['title']}, Rating: {rating['rating']}")
+            average_rating = sum(float(r['rating']) for r in ratings) / len(ratings)
+            print(f"You have rated {len(ratings)} movies with an average of :{average_rating}")
     except FileNotFoundError:
         print("No ratings found.")
 
