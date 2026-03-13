@@ -12,7 +12,7 @@ def search_movie(title):
     try:
         response = requests.get(URL_BASE, params=params, timeout=5)
     except requests.RequestException as e:
-        print(f"Error fetching movie data: {e}")
+        print(f"Error fetching movie data")
         
         return "error"
 
@@ -94,12 +94,14 @@ def menu():
             title = input("Enter movie title: ")
             result = search_movie(title)
             show_results(result)
-            rate_movie = input("Would you like to rate this movie? (yes/no): ")
-            if rate_movie == "yes":
-                rating = float(input("Enter your rating (0-10): "))
-                save_rating(result, rating)
-            else:
-                continue
+            if result is not None and result != "error":
+                rate_movie = input("Would you like to rate this movie? (yes/no): ")
+                if rate_movie == "yes":
+                    rating = (input("Enter your rating (0-10): "))
+                    if rating.isdigit() and 0 <= int(rating) <= 10:
+                        save_rating(result, rating)
+                    else:
+                        print("Invalid rating. Please enter a number between 0 and 10.")
         if choice == "2":
             show_ratings()
         if choice == "3":
