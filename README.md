@@ -4,12 +4,12 @@ This is an console app which allows you to search for a movie, save your own rat
 # Functionality
 - Search for a movie using the title
 - Show the movie's information
-- Save ratings i JSON
+- Save ratings in JSON
 - Update your rating
 - Show saved ratings
 - Compare ratings with IMDb
 
-# Tecnology used
+# Tecnologies used
 - Python
 - Requests
 - JSON
