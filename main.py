@@ -1,7 +1,10 @@
 import requests
 import json
+import os
+from dotenv import load_dotenv
 
-API_KEY = 'e44a40cb'
+load_dotenv()
+API_KEY = os.getenv("OMDB_API_KEY")
 URL_BASE = 'http://www.omdbapi.com/'
 
 def search_movie(title):
