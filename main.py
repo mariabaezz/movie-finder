@@ -116,7 +116,7 @@ def menu():
                 compare_ratings(result)
             else:
                 print("Movie not found. Please check the title and try again.")
-        if choice == "4":
+        if choice == "4" or choice.lower() == "exit":
             break
         
     print("Goodbye!")
